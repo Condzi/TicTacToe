@@ -28,7 +28,7 @@ enum class SceneID : uint8_t
 	Menu,
 	StandardGame,
 	GomoroGame,
-	WinScreen
+	VictoryScreen
 };
 
 struct Field final

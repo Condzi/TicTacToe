@@ -44,7 +44,7 @@ public:
 					con::Global.PlayerStats[ "winner"] = w.value()==Field::O ? "O" : "X";
 
 				con::Global.SceneStack.disableCurrentScene();
-				con::Global.SceneStack.push( static_cast<int16_t>( SceneID::WinScreen ) );
+				con::Global.SceneStack.push( static_cast<int16_t>( SceneID::VictoryScreen ) );
 			}
 		updateTimerText();
 	}

@@ -6,6 +6,7 @@
 #include "GamePCH.hpp"
 
 #include "StandardGameScene.hpp"
+#include "VictoryScreenScene.hpp"
 
 // @ToDo: Add LoadingScene instead:
 void loadAssets()
@@ -21,6 +22,8 @@ int main()
 	loadAssets();
 
 	con::Global.SceneStack.registerScene<StandardGameScene>( static_cast<int16_t>( SceneID::StandardGame ) );
+	con::Global.SceneStack.registerScene<VictoryScreenScene>( static_cast<int16_t>( SceneID::VictoryScreen ) );
+
 	con::Global.SceneStack.push( static_cast<int16_t>( SceneID::StandardGame ) );
 
 	con::Global.Game.run();
