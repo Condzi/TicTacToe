@@ -18,8 +18,8 @@ public:
 	const sf::Color TextColor = sf::Color( 130, 130, 130 );
 
 	static constexpr float32_t FadeInDelta = 15.0f;
+	static constexpr float32_t FadeOutDelta = 25.0f;
 	float transparency = 0;
-	// @ToDo: Fade out
 
 	VictoryScreenScene()
 	{
@@ -61,18 +61,64 @@ public:
 
 	void onUpdate() override
 	{
-		if ( transparency < 255 ) {
-			transparency += FadeInDelta;
-			if ( transparency > 255 )
-				transparency = 255;
-			auto fill = BackgroundColor;
-			fill.a = transparency;
-			backgroundRectangle.setFillColor( fill );
-			fill = TextColor;
-			fill.a = transparency;
-			winText.setFillColor( fill );
-			timeText.setFillColor( fill );
-			return;
+		updateTransparency();
+		checkInput();
+
+		if ( state == State::Exit ) {
+			con::Global.SceneStack.pop();
+			con::Global.SceneStack.enableCurrentScene();
 		}
+	}
+
+private:
+	enum class State : uint8_t
+	{
+		FadeIn,
+		FadeOut,
+		Stable,
+		Exit
+	} state;
+
+	void updateTransparency()
+	{
+		if ( state == State::FadeIn ) {
+
+			if ( transparency <= 255 ) {
+				transparency += FadeInDelta;
+				if ( transparency >= 255 ) {
+					state = State::Stable;
+					transparency = 255;
+				}
+			}
+		} else if ( state == State::FadeOut ) {
+			if ( transparency >= 0 ) {
+				transparency -= FadeOutDelta;
+				if ( transparency <= 0 ) {
+					state = State::Exit;
+					transparency = 0;
+				}
+			}
+		} else return;
+
+		// if fade in / fade out then set these
+		auto fill = BackgroundColor;
+		fill.a = transparency;
+		backgroundRectangle.setFillColor( fill );
+		fill = TextColor;
+		fill.a = transparency;
+		winText.setFillColor( fill );
+		timeText.setFillColor( fill );
+
+		fill = sf::Color::White;
+		fill.a = transparency;
+		winnerSprite.setColor( fill );
+	}
+
+	void checkInput()
+	{
+		// @ToDo: Placeholder until buttons show up.
+		if ( state == State::Stable )
+			if ( con::Global.Input.isDown( con::KeyboardKey::Escape ) )
+				state = State::FadeOut;
 	}
 };

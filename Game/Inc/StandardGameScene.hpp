@@ -26,6 +26,11 @@ public:
 
 	void onEnable() override
 	{
+		timer.clock.restart();
+	}
+
+	void onDisable() override
+	{
 		restart();
 	}
 
@@ -41,7 +46,7 @@ public:
 				if ( w.value() == Field::Empty )
 					con::Global.PlayerStats["winner"] = "draw";
 				else
-					con::Global.PlayerStats[ "winner"] = w.value()==Field::O ? "O" : "X";
+					con::Global.PlayerStats["winner"] = w.value()==Field::O ? "O" : "X";
 
 				con::Global.SceneStack.disableCurrentScene();
 				con::Global.SceneStack.push( static_cast<int16_t>( SceneID::VictoryScreen ) );
@@ -173,14 +178,9 @@ private:
 
 	void restart()
 	{
-		auto& field = currentTurn.field;
-		field = Field{};
-		field.mode = Field::O;
-
-		timer.clock.restart();
-		// @ToDo: make countdown
-		timer.text.setString( "0.00s" );
-		for ( auto& field : board->fields )
+		for ( auto& field : board->fields ) {
 			field.mode = Field::Empty;
+			field.updateSprite();
+		}
 	}
 };

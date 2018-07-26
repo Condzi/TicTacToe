@@ -53,7 +53,7 @@ struct Field final
 
 	void updateSprite()
 	{
-		if ( mode == Empty )
+		if ( mode == Empty ) 
 			sprite.setColor( sf::Color::Transparent );
 		else
 			sprite.setColor( defaultColor );

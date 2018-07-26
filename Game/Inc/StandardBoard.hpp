@@ -34,9 +34,12 @@ public:
 
 		for ( auto& field : fields ) {
 			sf::FloatRect fixedRect = field.sprite.getGlobalBounds();
-			fixedRect.width -= Field::VisualSize.x;
+			if ( fixedRect.width > Field::VisualSize.x )
+				fixedRect.width -= Field::VisualSize.x;
+
 			if ( fixedRect.contains( mousePos ) )
 				return &field.mode;
+
 		}
 
 		return {};
