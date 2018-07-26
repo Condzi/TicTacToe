@@ -18,12 +18,6 @@ public:
 	void onPush() override
 	{
 		tag = "Standard Game";
-
-		auto& textures = con::Global.Assets.Texture;
-
-		textures.load( "data/ox.png", "ox" );
-		textures.load( "data/board.png", "board" );
-
 		board = &spawn<StandardBoard>( Vec2f{ 96, 250 } );
 
 		initCurrentTurnData();
