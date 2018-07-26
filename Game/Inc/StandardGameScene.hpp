@@ -27,10 +27,16 @@ public:
 	void onUpdate() override
 	{
 		checkInput();
+		// @ToDo: Handle win - switch screens, stop timer.
+		if ( makeWinCheck )
+			if ( auto w = checkWin(); w )
+				log( con::LogPriority::Info, "And the winner is... ", w.value()==Field::X ? "X" : "O", "!" );
 		updateTimerText();
 	}
 
 private:
+	bool makeWinCheck = false;
+
 	void initCurrentTurnData()
 	{
 		// reinit
@@ -70,6 +76,7 @@ private:
 					currentTurn.field.mode = Field::O;
 
 				currentTurn.field.updateSprite();
+				makeWinCheck = true;
 			}
 		}
 	}
@@ -89,5 +96,58 @@ private:
 		auto finalText = secondsText.substr( 0, secondsText.find( '.' ) + 3 );
 
 		timer.text.setString( con::ConvertTo<std::string>( finalText, "s" ) );
+	}
+
+	std::optional<Field::Mode> checkWin()
+	{
+		makeWinCheck = false;
+		const auto& fields = board->fields;
+
+		// max 3
+		uint8_t countOfFieldModes = 0;
+		Field::Mode currentCheckingMode;
+
+		// check every row
+		for ( size_t y = 0; y < 3; y++ ) {
+			currentCheckingMode = fields.at( { 0, y } ).mode;
+			countOfFieldModes = 1;
+			for ( size_t x = 1; x < 3; x++ ) {
+				if ( fields.at( { x,y } ).mode == currentCheckingMode )
+					countOfFieldModes++;
+				else
+					break;
+			}
+
+			if ( countOfFieldModes == 3 && currentCheckingMode != Field::Mode::Empty )
+				return currentCheckingMode;
+		}
+
+		// check every column
+		for ( size_t x = 0; x < 3; x++ ) {
+			currentCheckingMode = fields.at( { x, 0 } ).mode;
+			countOfFieldModes = 1;
+			for ( size_t y = 1; y < 3; y++ ) {
+				if ( fields.at( { x,y } ).mode == currentCheckingMode )
+					countOfFieldModes++;
+				else
+					break;
+			}
+
+			if ( countOfFieldModes == 3 && currentCheckingMode != Field::Mode::Empty )
+				return currentCheckingMode;
+		}
+
+		// check crossing A
+		if ( allOf( fields.at( { 0,0 } ).mode, fields.at( { 1,1 } ).mode, fields.at( { 2,2 } ).mode ) )
+			if ( auto m = fields.at( { 0,0 } ).mode; m != Field::Mode::Empty )
+				return m;
+
+		// check crossing B
+		if ( allOf( fields.at( { 0,2 } ).mode, fields.at( { 1,1 } ).mode, fields.at( { 2,0 } ).mode ) )
+			if ( auto m = fields.at( { 0,2 } ).mode; m != Field::Mode::Empty )
+				return m;
+
+
+		return {};
 	}
 };

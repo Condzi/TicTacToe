@@ -78,3 +78,10 @@ struct Timer final
 	sf::Clock clock;
 	con::Text text;
 };
+
+// @ToDo: Add to the engine codebase.
+template <typename T, typename ...TArgs>
+bool allOf( T t, TArgs&& ...args )
+{
+	return ( ( t == args ) && ... );
+}
