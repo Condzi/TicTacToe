@@ -10,6 +10,7 @@ class StandardBoard final :
 {
 public:
 	con::FixedArray2D<Field> fields{ {3,3} };
+	sf::Color defaultColor = sf::Color::White;
 
 	StandardBoard( const Vec2f& position_ )
 	{
@@ -21,6 +22,8 @@ public:
 
 	void onUpdate() override
 	{
+		board.setColor( defaultColor );
+
 		for ( auto& field : fields )
 			field.updateSprite();
 	}

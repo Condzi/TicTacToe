@@ -25,13 +25,12 @@ public:
 		textures.load( "data/ox.png", "ox" );
 		textures.load( "data/board.png", "board" );
 
-		board = &spawn<StandardBoard>( Vec2f{ 25, 150 } );
+		board = &spawn<StandardBoard>( Vec2f{ 96, 250 } );
 		initCurrentTurnData();
 	}
 
 	void onUpdate() override
 	{
-
 		if ( auto fieldModeRet = board->getFieldModeAtMousePosition(); fieldModeRet.has_value() ) {
 			auto& fieldMode = *fieldModeRet.value();
 			if ( fieldMode != Field::Empty )
@@ -67,6 +66,7 @@ private:
 		fieldSprite.setPosition( board->position.x + Field::VisualSize.x, board->position.y - Field::VisualSize.y * 1.2 );
 		currentTurnText.setPosition( fieldSprite.getPosition().x + Field::VisualSize.x * 1.2f, fieldSprite.getPosition().y + Field::VisualSize.y / 3 );
 
+		board->defaultColor = currentTurnField.defaultColor = sf::Color( 133, 181, 222 );
 		currentTurnField.updateSprite();
 	}
 };

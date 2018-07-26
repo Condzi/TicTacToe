@@ -37,6 +37,7 @@ struct Field final
 	inline static const Vec2u VisualSize{ static_cast<uint32_t>( TextureSize.x * Scale ), static_cast<uint32_t>( TextureSize.y * Scale ) };
 
 	con::Sprite sprite;
+	sf::Color defaultColor = sf::Color::White;
 	enum Mode
 	{
 		Empty,
@@ -55,7 +56,7 @@ struct Field final
 		if ( mode == Empty )
 			sprite.setColor( sf::Color::Transparent );
 		else
-			sprite.setColor( sf::Color::White );
+			sprite.setColor( defaultColor );
 
 		auto texSize = static_cast<Vec2i>( TextureSize );
 
