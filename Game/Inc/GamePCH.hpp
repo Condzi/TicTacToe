@@ -66,3 +66,15 @@ struct Field final
 			sprite.setTextureRect( { texSize.x,0, texSize.x, texSize.y } );
 	}
 };
+
+struct CurrentTurn final
+{
+	Field field;
+	con::Text text;
+};
+
+struct Timer final
+{
+	sf::Clock clock;
+	con::Text text;
+};

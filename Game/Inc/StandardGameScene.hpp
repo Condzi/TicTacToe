@@ -11,9 +11,8 @@ class StandardGameScene final :
 	public con::Scene
 {
 public:
-	Field currentTurnField;
-	con::Text currentTurnText;
-
+	CurrentTurn currentTurn;
+	Timer timer;
 	StandardBoard* board;
 
 	void onPush() override
@@ -26,10 +25,42 @@ public:
 		textures.load( "data/board.png", "board" );
 
 		board = &spawn<StandardBoard>( Vec2f{ 96, 250 } );
+
 		initCurrentTurnData();
+		initTimer();
 	}
 
 	void onUpdate() override
+	{
+		checkInput();
+		updateTimerText();
+	}
+
+private:
+	void initCurrentTurnData()
+	{
+		// reinit
+		auto& field = currentTurn.field;
+		auto& text = currentTurn.text;
+
+		field = Field{};
+		field.mode = Field::O;
+		text.setString( "turn" );
+		text.setFont( con::Global.Assets.Font.getDefault() );
+
+		auto& fieldSprite = field.sprite;
+
+		fieldSprite.setScale( Scale, Scale );
+		fieldSprite.setTexture( con::Global.Assets.Texture.get( "ox" ) );
+
+		fieldSprite.setPosition( board->position.x + Field::VisualSize.x, board->position.y - Field::VisualSize.y * 1.2 );
+		text.setPosition( fieldSprite.getPosition().x + Field::VisualSize.x * 1.2f, fieldSprite.getPosition().y + Field::VisualSize.y / 3 );
+
+		board->defaultColor = field.defaultColor = sf::Color( 133, 181, 222 );
+		field.updateSprite();
+	}
+
+	void checkInput()
 	{
 		if ( auto fieldModeRet = board->getFieldModeAtMousePosition(); fieldModeRet.has_value() ) {
 			auto& fieldMode = *fieldModeRet.value();
@@ -37,36 +68,32 @@ public:
 				return;
 
 			if ( con::Global.Input.isDown( con::MouseButton::Left ) ) {
-				fieldMode = currentTurnField.mode;
+				fieldMode = currentTurn.field.mode;
 
-				if ( currentTurnField.mode == Field::O )
-					currentTurnField.mode = Field::X;
-				else if ( currentTurnField.mode == Field::X )
-					currentTurnField.mode = Field::O;
+				if ( currentTurn.field.mode == Field::O )
+					currentTurn.field.mode = Field::X;
+				else if ( currentTurn.field.mode == Field::X )
+					currentTurn.field.mode = Field::O;
 
-				currentTurnField.updateSprite();
+				currentTurn.field.updateSprite();
 			}
 		}
 	}
 
-private:
-	void initCurrentTurnData()
+	void initTimer()
 	{
-		// reinit
-		currentTurnField = Field{};
-		currentTurnField.mode = Field::O;
-		currentTurnText.setString( "turn" );
-		currentTurnText.setFont( con::Global.Assets.Font.getDefault() );
+		timer.clock.restart();
 
-		auto& fieldSprite = currentTurnField.sprite;
+		timer.text.setFont( con::Global.Assets.Font.getDefault() );
+		timer.text.setString( "0.00s" );
+		timer.text.setPosition( board->position.x + Field::VisualSize.x * 1.1, currentTurn.field.sprite.getPosition().y - Field::VisualSize.y * 0.5f );
+	}
 
-		fieldSprite.setScale( Scale, Scale );
-		fieldSprite.setTexture( con::Global.Assets.Texture.get( "ox" ) );
+	void updateTimerText()
+	{
+		auto secondsText = con::ConvertTo<std::string>( timer.clock.getElapsedTime().asSeconds() );
+		auto finalText = secondsText.substr( 0, secondsText.find( '.' ) + 3 );
 
-		fieldSprite.setPosition( board->position.x + Field::VisualSize.x, board->position.y - Field::VisualSize.y * 1.2 );
-		currentTurnText.setPosition( fieldSprite.getPosition().x + Field::VisualSize.x * 1.2f, fieldSprite.getPosition().y + Field::VisualSize.y / 3 );
-
-		board->defaultColor = currentTurnField.defaultColor = sf::Color( 133, 181, 222 );
-		currentTurnField.updateSprite();
+		timer.text.setString( con::ConvertTo<std::string>( finalText, "s" ) );
 	}
 };
