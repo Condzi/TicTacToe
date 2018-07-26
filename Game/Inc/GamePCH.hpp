@@ -18,3 +18,20 @@
 #include <Engine/Utility.hpp>
 #include <Engine/FixedArray2D.hpp>
 #include <Engine/Drawable.hpp>
+
+// Common structures / enums etc
+
+enum class SceneID : uint8_t
+{
+	Menu,
+	StandardGame,
+	GomoroGame
+	// FinishScreen ?
+};
+
+enum class FieldMode : uint8_t
+{
+	Empty,
+	O,
+	X
+};

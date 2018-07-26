@@ -9,8 +9,8 @@
 
 int main()
 {
-	con::Global.SceneStack.registerScene<StandardGameScene>( 0 );
-	con::Global.SceneStack.push( 0 );
+	con::Global.SceneStack.registerScene<StandardGameScene>( static_cast<int16_t>( SceneID::StandardGame ) );
+	con::Global.SceneStack.push( static_cast<int16_t>( SceneID::StandardGame ) );
 
 	con::Global.Game.run();
 }
