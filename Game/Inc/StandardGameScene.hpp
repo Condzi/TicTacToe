@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "StandardBoard.hpp"
+
 class StandardGameScene final :
 	public con::Scene
 {
@@ -17,5 +19,7 @@ public:
 
 		textures.load( "data/ox.png", "ox" );
 		textures.load( "data/board.png", "board" );
+
+		spawn<StandardBoard>( Vec2f{ 250, 25 } );
 	}
 };

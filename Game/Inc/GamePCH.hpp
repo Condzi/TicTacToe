@@ -29,9 +29,15 @@ enum class SceneID : uint8_t
 	// FinishScreen ?
 };
 
-enum class FieldMode : uint8_t
+struct Field final
 {
-	Empty,
-	O,
-	X
+	inline static const Vec2u Size{ 64,64 };
+
+	con::Sprite sprite;
+	enum
+	{
+		Empty,
+		O,
+		X
+	} mode;
 };
