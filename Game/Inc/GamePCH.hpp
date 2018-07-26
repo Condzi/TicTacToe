@@ -21,6 +21,8 @@
 
 // Common structures / enums etc
 
+constexpr float32_t Scale = 1.5f;
+
 enum class SceneID : uint8_t
 {
 	Menu,
@@ -31,10 +33,11 @@ enum class SceneID : uint8_t
 
 struct Field final
 {
-	inline static const Vec2u Size{ 64,64 };
+	inline static const Vec2u TextureSize{ 64,64 };
+	inline static const Vec2u VisualSize{ static_cast<uint32_t>( TextureSize.x * Scale ), static_cast<uint32_t>( TextureSize.y * Scale ) };
 
 	con::Sprite sprite;
-	enum
+	enum Mode
 	{
 		Empty,
 		O,
