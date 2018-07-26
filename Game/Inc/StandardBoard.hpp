@@ -16,36 +16,25 @@ public:
 		position = position_;
 
 		updatePositions();
-		setTextures();
+		setTexture();
 	}
 
 	void onUpdate() override
 	{
-		for ( auto& field : fields ) {
-			// because conversion... 
-			auto textureSize = static_cast<Vec2i>( Field::TextureSize );
-
-			// Don't draw anything.
-			if ( field.mode == Field::Empty ) {
-				field.sprite.setTextureRect( { 0,0,64,64 } );
-				field.sprite.setColor( sf::Color::Transparent );
-			} else
-				field.sprite.setColor( sf::Color::White );
-
-			if ( field.mode == Field::O )
-				field.sprite.setTextureRect( { 0,0,textureSize.x, textureSize.y } );
-			else if ( field.mode == Field::X )
-				field.sprite.setTextureRect( { textureSize.x,0,textureSize.x, textureSize.y } );
-		}
+		for ( auto& field : fields )
+			field.updateSprite();
 	}
 
 	std::optional<Field::Mode* const> getFieldModeAtMousePosition()
 	{
 		auto mousePos = static_cast<Vec2f>( con::Global.Input.getMousePosition() );
 
-		for ( auto& field : fields )
-			if ( field.sprite.getGlobalBounds().contains( mousePos ) )
+		for ( auto& field : fields ) {
+			sf::FloatRect fixedRect = field.sprite.getGlobalBounds();
+			fixedRect.width -= Field::VisualSize.x;
+			if ( fixedRect.contains( mousePos ) )
 				return &field.mode;
+		}
 
 		return {};
 	}
@@ -61,16 +50,9 @@ private:
 				fields.at( { x,y } ).sprite.setPosition( x * Field::VisualSize.x + position.x, y * Field::VisualSize.y + position.y );
 	}
 
-	void setTextures()
+	void setTexture()
 	{
-		auto& textures = con::Global.Assets.Texture;
-
-		board.setTexture( textures.get( "board" ) );
+		board.setTexture( con::Global.Assets.Texture.get( "board" ) );
 		board.setScale( Scale, Scale );
-
-		for ( auto& field : fields ) {
-			field.sprite.setScale( Scale, Scale );
-			field.sprite.setTexture( textures.get( "ox" ) );
-		}
 	}
 };

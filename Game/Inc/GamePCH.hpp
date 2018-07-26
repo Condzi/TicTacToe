@@ -42,5 +42,26 @@ struct Field final
 		Empty,
 		O,
 		X
-	} mode;
+	} mode = Empty;
+
+	Field()
+	{
+		sprite.setScale( Scale, Scale );
+		sprite.setTexture( con::Global.Assets.Texture.get( "ox" ) );
+	}
+
+	void updateSprite()
+	{
+		if ( mode == Empty )
+			sprite.setColor( sf::Color::Transparent );
+		else
+			sprite.setColor( sf::Color::White );
+
+		auto texSize = static_cast<Vec2i>( TextureSize );
+
+		if ( mode == O )
+			sprite.setTextureRect( { 0,0, texSize.x, texSize.y } );
+		else if ( mode == X )
+			sprite.setTextureRect( { texSize.x,0, texSize.x, texSize.y } );
+	}
 };
