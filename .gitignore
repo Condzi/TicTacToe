@@ -1,0 +1,12 @@
+*.dll
+*.pdb
+*.sln
+*.vcxproj
+*.filters
+*.user
+
+log.txt
+
+binaries/
+intermediates/
+.vs/
