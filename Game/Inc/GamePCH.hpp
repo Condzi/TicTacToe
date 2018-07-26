@@ -27,8 +27,8 @@ enum class SceneID : uint8_t
 {
 	Menu,
 	StandardGame,
-	GomoroGame
-	// FinishScreen ?
+	GomoroGame,
+	WinScreen
 };
 
 struct Field final

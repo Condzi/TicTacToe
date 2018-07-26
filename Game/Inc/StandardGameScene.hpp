@@ -24,13 +24,28 @@ public:
 		initTimer();
 	}
 
+	void onEnable() override
+	{
+		restart();
+	}
+
 	void onUpdate() override
 	{
 		checkInput();
-		// @ToDo: Handle win - switch screens, stop timer.
 		if ( makeWinCheck )
-			if ( auto w = checkWin(); w )
-				log( con::LogPriority::Info, "And the winner is... ", w.value()==Field::X ? "X" : "O", "!" );
+			if ( auto w = checkWin(); w ) {
+				// get the string from timer text, so update it first
+				updateTimerText();
+				con::Global.PlayerStats["time"] = timer.text.getString().toAnsiString();
+
+				if ( w.value() == Field::Empty )
+					con::Global.PlayerStats["winner"] = "draw";
+				else
+					con::Global.PlayerStats[ "winner"] = w.value()==Field::O ? "O" : "X";
+
+				con::Global.SceneStack.disableCurrentScene();
+				con::Global.SceneStack.push( static_cast<int16_t>( SceneID::WinScreen ) );
+			}
 		updateTimerText();
 	}
 
@@ -147,7 +162,25 @@ private:
 			if ( auto m = fields.at( { 0,2 } ).mode; m != Field::Mode::Empty )
 				return m;
 
+		// If all fields are occupied then return Empty - this means that it's a draw.
+		if ( std::none_of( fields.begin(), fields.end(), []( const Field& f ) {
+			return f.mode == Field::Empty;
+		} ) )
+			return Field::Empty;
 
 		return {};
+	}
+
+	void restart()
+	{
+		auto& field = currentTurn.field;
+		field = Field{};
+		field.mode = Field::O;
+
+		timer.clock.restart();
+		// @ToDo: make countdown
+		timer.text.setString( "0.00s" );
+		for ( auto& field : board->fields )
+			field.mode = Field::Empty;
 	}
 };
