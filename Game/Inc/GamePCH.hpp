@@ -84,6 +84,8 @@ struct Timer final
 	sf::Time countdownTime = sf::seconds( 1 );
 	sf::Clock clock;
 	con::Text text;
+	inline static const sf::Color TextColorCountdown = sf::Color::Red;
+	inline static const sf::Color TextColorCounting = sf::Color::White;
 	// @ToDo: Different text color for Modes.
 
 	void reset()
@@ -93,6 +95,7 @@ struct Timer final
 		text.setString( con::ConvertTo<std::string>( "-", countdownTimeStr.substr( 0, countdownTimeStr.find( '.' ) + 3 ), "s" ) );
 		clock.restart();
 		mode = Mode::Countdown;
+		text.setFillColor( TextColorCountdown );
 	}
 
 	void updateTimerText()
@@ -101,13 +104,27 @@ struct Timer final
 		if ( mode == Mode::Countdown ) {
 			float sec = clock.getElapsedTime().asSeconds();
 			float countdownSec = countdownTime.asSeconds();
+			float countdownDelta = countdownSec - sec;
 
 			// @Bug: Can't set sf::Clock time point, so there is small amout of milliseconds that are discarded.
-			if ( countdownSec - sec < 0 ) {
+			if ( countdownDelta <= 0.0f ) {
 				mode = Mode::Counting;
 				clock.restart();
-			} else
+				text.setFillColor( TextColorCounting );
+			} else {
+				// Fading to TextColorCounting 
+				auto currentColor = text.getFillColor();
+				const auto desiredColor = TextColorCounting;
+				currentColor.r += ( desiredColor.r - currentColor.r ) * ( countdownSec - countdownDelta );
+				currentColor.g += ( desiredColor.g - currentColor.g ) * ( countdownSec - countdownDelta );
+				currentColor.b += ( desiredColor.b - currentColor.b ) * ( countdownSec - countdownDelta );
+
+				std::cout << (int)currentColor.r << ", " << (int)currentColor.g << ", " << (int)currentColor.b << ", d: "<< countdownDelta << '\n';
+
+				text.setFillColor( currentColor );
+
 				secondsString = con::ConvertTo<std::string>( "-", countdownSec - sec );
+			}
 		}
 		if ( mode == Mode::Counting )
 			secondsString = con::ConvertTo<std::string>( clock.getElapsedTime().asSeconds() );
