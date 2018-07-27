@@ -6,6 +6,7 @@
 #pragma once
 
 #include "StandardBoard.hpp"
+#include "VictoryScreenScene.hpp"
 
 class StandardGameScene final :
 	public con::Scene
@@ -29,28 +30,15 @@ public:
 		timer.clock.restart();
 	}
 
-	void onDisable() override
-	{
-		restart();
-	}
-
 	void onUpdate() override
 	{
+		clearScreenDuringVictoryScreen();
+		// don't update below
+		if ( auto val = con::Global.SceneStack.getSceneOnTop().value(); val->tag == "Victory Screen" )
+			return;
+
 		checkInput();
-		if ( makeWinCheck )
-			if ( auto w = checkWin(); w ) {
-				// get the string from timer text, so update it first
-				updateTimerText();
-				con::Global.PlayerStats["time"] = timer.text.getString().toAnsiString();
-
-				if ( w.value() == Field::Empty )
-					con::Global.PlayerStats["winner"] = "draw";
-				else
-					con::Global.PlayerStats["winner"] = w.value()==Field::O ? "O" : "X";
-
-				con::Global.SceneStack.disableCurrentScene();
-				con::Global.SceneStack.push( static_cast<int16_t>( SceneID::VictoryScreen ) );
-			}
+		tryCheckWin();
 		updateTimerText();
 	}
 
@@ -176,11 +164,44 @@ private:
 		return {};
 	}
 
-	void restart()
+	void clearScreenDuringVictoryScreen()
 	{
-		for ( auto& field : board->fields ) {
-			field.mode = Field::Empty;
-			field.updateSprite();
+		// Disable in next frame - give time for empty fields to render as empty
+		static bool disableNow = false;
+		if ( disableNow ) {
+			disableNow = false;
+			Disable();
+			return;
 		}
+
+		// Clear fields only if player can't see them
+		if ( auto val = con::Global.SceneStack.getSceneOnTop().value(); val->tag == "Victory Screen" ) {
+			if ( dynamic_cast<VictoryScreenScene&>( *val ).state == VictoryScreenScene::State::Stable ) {
+
+				for ( auto& field : board->fields ) {
+					field.mode = Field::Empty;
+					field.updateSprite();
+				}
+
+				disableNow = true;
+			}
+		}
+	}
+
+	void tryCheckWin()
+	{
+		if ( makeWinCheck )
+			if ( auto w = checkWin(); w ) {
+				// get the string from timer text, so update it first
+				updateTimerText();
+				con::Global.PlayerStats["time"] = timer.text.getString().toAnsiString();
+
+				if ( w.value() == Field::Empty )
+					con::Global.PlayerStats["winner"] = "draw";
+				else
+					con::Global.PlayerStats["winner"] = w.value()==Field::O ? "O" : "X";
+
+				con::Global.SceneStack.push( static_cast<int16_t>( SceneID::VictoryScreen ) );
+			}
 	}
 };

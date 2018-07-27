@@ -9,13 +9,21 @@ class VictoryScreenScene final :
 	public con::Scene
 {
 public:
+	enum class State : uint8_t
+	{
+		FadeIn,
+		FadeOut,
+		Stable,
+		Exit
+	} state;
+
 	con::RectangleShape backgroundRectangle;
 	con::Sprite winnerSprite;
 	con::Text winText;
 	con::Text timeText;
 
 	const sf::Color BackgroundColor = sf::Color( 40, 40, 40 );
-	const sf::Color TextColor = sf::Color( 130, 130, 130 );
+	const sf::Color TextColor = sf::Color( 133, 181, 222 );
 
 	static constexpr float32_t FadeInDelta = 15.0f;
 	static constexpr float32_t FadeOutDelta = 25.0f;
@@ -23,6 +31,8 @@ public:
 
 	VictoryScreenScene()
 	{
+		tag = "Victory Screen";
+
 		backgroundRectangle.setSize( static_cast<Vec2f>( con::Global.GameWindow.getSize() ) );
 		winnerSprite.setTexture( con::Global.Assets.Texture.get( "ox" ) );
 		winnerSprite.setScale( Scale, Scale );
@@ -71,18 +81,10 @@ public:
 	}
 
 private:
-	enum class State : uint8_t
-	{
-		FadeIn,
-		FadeOut,
-		Stable,
-		Exit
-	} state;
 
 	void updateTransparency()
 	{
 		if ( state == State::FadeIn ) {
-
 			if ( transparency <= 255 ) {
 				transparency += FadeInDelta;
 				if ( transparency >= 255 ) {
@@ -118,7 +120,8 @@ private:
 	{
 		// @ToDo: Placeholder until buttons show up.
 		if ( state == State::Stable )
-			if ( con::Global.Input.isDown( con::KeyboardKey::Escape ) )
+			if ( con::Global.Input.isDown( con::KeyboardKey::Escape ) ) {
 				state = State::FadeOut;
+			}
 	}
 };
