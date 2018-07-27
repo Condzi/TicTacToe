@@ -81,7 +81,6 @@ public:
 	}
 
 private:
-
 	void updateTransparency()
 	{
 		if ( state == State::FadeIn ) {
