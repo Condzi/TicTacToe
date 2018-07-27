@@ -12,6 +12,7 @@ class StandardGameScene final :
 	public con::Scene
 {
 public:
+	const sf::Color WinnerColor = sf::Color( 150, 40, 200 );
 	CurrentTurn currentTurn;
 	Timer timer;
 	StandardBoard* board;
@@ -109,51 +110,77 @@ private:
 	std::optional<Field::Mode> checkWin()
 	{
 		makeWinCheck = false;
-		const auto& fields = board->fields;
+		auto& fields = board->fields;
 
 		// max 3
 		uint8_t countOfFieldModes = 0;
 		Field::Mode currentCheckingMode;
+		// For highliting winner
+		sf::Color* fieldsColors[3];
+		auto highlightFields = [&] {
+			for ( auto field : fieldsColors )
+				*field = WinnerColor;
+		};
 
 		// check every row
 		for ( size_t y = 0; y < 3; y++ ) {
-			currentCheckingMode = fields.at( { 0, y } ).mode;
+			const Vec2u firstFieldPos{ 0,y };
+			fieldsColors[0] = &fields.at( firstFieldPos ).defaultColor;
+			currentCheckingMode = fields.at( firstFieldPos ).mode;
 			countOfFieldModes = 1;
 			for ( size_t x = 1; x < 3; x++ ) {
-				if ( fields.at( { x,y } ).mode == currentCheckingMode )
+				if ( auto& field = fields.at( { x,y } ); field.mode == currentCheckingMode ) {
+					fieldsColors[countOfFieldModes] = &field.defaultColor;
 					countOfFieldModes++;
-				else
+				} else
 					break;
 			}
 
-			if ( countOfFieldModes == 3 && currentCheckingMode != Field::Mode::Empty )
+			if ( countOfFieldModes == 3 && currentCheckingMode != Field::Mode::Empty ) {
+				highlightFields();
 				return currentCheckingMode;
+			}
 		}
 
 		// check every column
 		for ( size_t x = 0; x < 3; x++ ) {
-			currentCheckingMode = fields.at( { x, 0 } ).mode;
+			const Vec2u firstFieldPos{ x,0 };
+			fieldsColors[0] = &fields.at( firstFieldPos ).defaultColor;
+			currentCheckingMode = fields.at( firstFieldPos ).mode;
 			countOfFieldModes = 1;
 			for ( size_t y = 1; y < 3; y++ ) {
-				if ( fields.at( { x,y } ).mode == currentCheckingMode )
+				if ( auto& field = fields.at( { x,y } ); field.mode == currentCheckingMode ) {
+					fieldsColors[countOfFieldModes] = &field.defaultColor;
 					countOfFieldModes++;
-				else
+				} else
 					break;
 			}
 
-			if ( countOfFieldModes == 3 && currentCheckingMode != Field::Mode::Empty )
+			if ( countOfFieldModes == 3 && currentCheckingMode != Field::Mode::Empty ) {
+				highlightFields();
 				return currentCheckingMode;
+			}
 		}
 
 		// check crossing A
 		if ( allOf( fields.at( { 0,0 } ).mode, fields.at( { 1,1 } ).mode, fields.at( { 2,2 } ).mode ) )
-			if ( auto m = fields.at( { 0,0 } ).mode; m != Field::Mode::Empty )
+			if ( auto m = fields.at( { 0,0 } ).mode; m != Field::Mode::Empty ) {
+				fieldsColors[0] = &fields.at( { 0,0 } ).defaultColor;
+				fieldsColors[1] = &fields.at( { 1,1 } ).defaultColor;
+				fieldsColors[2] = &fields.at( { 2,2 } ).defaultColor;
+				highlightFields();
 				return m;
+			}
 
 		// check crossing B
 		if ( allOf( fields.at( { 0,2 } ).mode, fields.at( { 1,1 } ).mode, fields.at( { 2,0 } ).mode ) )
-			if ( auto m = fields.at( { 0,2 } ).mode; m != Field::Mode::Empty )
+			if ( auto m = fields.at( { 0,2 } ).mode; m != Field::Mode::Empty ) {
+				fieldsColors[0] = &fields.at( { 0,2 } ).defaultColor;
+				fieldsColors[1] = &fields.at( { 1,1 } ).defaultColor;
+				fieldsColors[2] = &fields.at( { 2,0 } ).defaultColor;
+				highlightFields();
 				return m;
+			}
 
 		// If all fields are occupied then return Empty - this means that it's a draw.
 		if ( std::none_of( fields.begin(), fields.end(), []( const Field& f ) {
@@ -180,6 +207,7 @@ private:
 
 				for ( auto& field : board->fields ) {
 					field.mode = Field::Empty;
+					field.defaultColor = sf::Color::White;
 					field.updateSprite();
 				}
 
