@@ -17,6 +17,14 @@ void loadAssets()
 	textures.load( "data/ox.png", "ox" );
 	textures.load( "data/board.png", "board" );
 	textures.load( "data/buttons.png", "buttons" );
+
+	auto& sound = con::Global.Assets.Sound;
+	sound.load( "data/select_menu.wav", "select_menu" );
+	sound.load( "data/select_field.wav", "select_field" );
+
+	auto& music = con::Global.Assets.Music;
+	music.add( "data/bensound-love.ogg", "menu" );
+	music.add( "data/bensound-creativeminds.ogg", "game" );
 }
 
 int main()

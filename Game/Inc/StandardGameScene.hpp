@@ -77,7 +77,7 @@ private:
 		fieldSprite.setPosition( board->position.x + Field::VisualSize.x * 0.5, board->position.y - Field::VisualSize.y * 1.3 );
 		text.setPosition( fieldSprite.getPosition().x + Field::VisualSize.x * 1.2f, fieldSprite.getPosition().y + Field::VisualSize.y / 3 );
 
-		board->defaultColor = field.defaultColor = WinnerColor;
+		board->defaultColor = field.currentColor = WinnerColor;
 		field.updateSprite();
 	}
 
@@ -139,12 +139,12 @@ private:
 		// check every row
 		for ( size_t y = 0; y < 3; y++ ) {
 			const Vec2u firstFieldPos{ 0,y };
-			fieldsColors[0] = &fields.at( firstFieldPos ).defaultColor;
+			fieldsColors[0] = &fields.at( firstFieldPos ).currentColor;
 			currentCheckingMode = fields.at( firstFieldPos ).mode;
 			countOfFieldModes = 1;
 			for ( size_t x = 1; x < 3; x++ ) {
 				if ( auto& field = fields.at( { x,y } ); field.mode == currentCheckingMode ) {
-					fieldsColors[countOfFieldModes] = &field.defaultColor;
+					fieldsColors[countOfFieldModes] = &field.currentColor;
 					countOfFieldModes++;
 				} else
 					break;
@@ -157,12 +157,12 @@ private:
 		// check every column
 		for ( size_t x = 0; x < 3; x++ ) {
 			const Vec2u firstFieldPos{ x,0 };
-			fieldsColors[0] = &fields.at( firstFieldPos ).defaultColor;
+			fieldsColors[0] = &fields.at( firstFieldPos ).currentColor;
 			currentCheckingMode = fields.at( firstFieldPos ).mode;
 			countOfFieldModes = 1;
 			for ( size_t y = 1; y < 3; y++ ) {
 				if ( auto& field = fields.at( { x,y } ); field.mode == currentCheckingMode ) {
-					fieldsColors[countOfFieldModes] = &field.defaultColor;
+					fieldsColors[countOfFieldModes] = &field.currentColor;
 					countOfFieldModes++;
 				} else
 					break;
@@ -175,9 +175,9 @@ private:
 		// check crossing A
 		if ( allOf( fields.at( { 0,0 } ).mode, fields.at( { 1,1 } ).mode, fields.at( { 2,2 } ).mode ) )
 			if ( auto m = fields.at( { 0,0 } ).mode; m != Field::Mode::Empty ) {
-				fieldsColors[0] = &fields.at( { 0,0 } ).defaultColor;
-				fieldsColors[1] = &fields.at( { 1,1 } ).defaultColor;
-				fieldsColors[2] = &fields.at( { 2,2 } ).defaultColor;
+				fieldsColors[0] = &fields.at( { 0,0 } ).currentColor;
+				fieldsColors[1] = &fields.at( { 1,1 } ).currentColor;
+				fieldsColors[2] = &fields.at( { 2,2 } ).currentColor;
 				highlightFields();
 				return m;
 			}
@@ -185,9 +185,9 @@ private:
 		// check crossing B
 		if ( allOf( fields.at( { 0,2 } ).mode, fields.at( { 1,1 } ).mode, fields.at( { 2,0 } ).mode ) )
 			if ( auto m = fields.at( { 0,2 } ).mode; m != Field::Mode::Empty ) {
-				fieldsColors[0] = &fields.at( { 0,2 } ).defaultColor;
-				fieldsColors[1] = &fields.at( { 1,1 } ).defaultColor;
-				fieldsColors[2] = &fields.at( { 2,0 } ).defaultColor;
+				fieldsColors[0] = &fields.at( { 0,2 } ).currentColor;
+				fieldsColors[1] = &fields.at( { 1,1 } ).currentColor;
+				fieldsColors[2] = &fields.at( { 2,0 } ).currentColor;
 				highlightFields();
 				return m;
 			}
@@ -233,7 +233,7 @@ private:
 
 				for ( auto& field : board->fields ) {
 					field.mode = Field::Empty;
-					field.defaultColor = sf::Color::White;
+					field.currentColor = Field::DefaultColor;
 					field.updateSprite();
 				}
 
