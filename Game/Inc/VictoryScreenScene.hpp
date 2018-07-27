@@ -25,7 +25,7 @@ public:
 	const sf::Color BackgroundColor = sf::Color( 40, 40, 40 );
 	const sf::Color TextColor = sf::Color( 133, 181, 222 );
 
-	static constexpr float32_t FadeInDelta = 15.0f;
+	static constexpr float32_t FadeInDelta = 10.0f;
 	static constexpr float32_t FadeOutDelta = 25.0f;
 	float transparency = 0;
 

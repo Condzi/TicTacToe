@@ -12,7 +12,7 @@ class StandardGameScene final :
 	public con::Scene
 {
 public:
-	const sf::Color WinnerColor = sf::Color( 150, 40, 200 );
+	const sf::Color WinnerColor = sf::Color( 133, 181, 222 );
 	CurrentTurn currentTurn;
 	Timer timer;
 	StandardBoard* board;
@@ -65,7 +65,7 @@ private:
 		fieldSprite.setPosition( board->position.x + Field::VisualSize.x, board->position.y - Field::VisualSize.y * 1.2 );
 		text.setPosition( fieldSprite.getPosition().x + Field::VisualSize.x * 1.2f, fieldSprite.getPosition().y + Field::VisualSize.y / 3 );
 
-		board->defaultColor = field.defaultColor = sf::Color( 133, 181, 222 );
+		board->defaultColor = field.defaultColor = WinnerColor;
 		field.updateSprite();
 	}
 
@@ -121,7 +121,13 @@ private:
 			for ( auto field : fieldsColors )
 				*field = WinnerColor;
 		};
-
+		auto isWinnersLine = [&] {
+			if ( countOfFieldModes == 3 && currentCheckingMode != Field::Mode::Empty ) {
+				highlightFields();
+				return true;
+			}
+			return false;
+		};
 		// check every row
 		for ( size_t y = 0; y < 3; y++ ) {
 			const Vec2u firstFieldPos{ 0,y };
@@ -136,10 +142,8 @@ private:
 					break;
 			}
 
-			if ( countOfFieldModes == 3 && currentCheckingMode != Field::Mode::Empty ) {
-				highlightFields();
+			if ( isWinnersLine() )
 				return currentCheckingMode;
-			}
 		}
 
 		// check every column
@@ -156,10 +160,8 @@ private:
 					break;
 			}
 
-			if ( countOfFieldModes == 3 && currentCheckingMode != Field::Mode::Empty ) {
-				highlightFields();
+			if ( isWinnersLine() )
 				return currentCheckingMode;
-			}
 		}
 
 		// check crossing A
