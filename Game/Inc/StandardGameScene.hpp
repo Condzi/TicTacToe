@@ -15,7 +15,9 @@ class StandardGameScene final :
 {
 public:
 	const sf::Color WinnerColor = sf::Color( 133, 181, 222 );
-	con::RectangleShape background;
+	const sf::Color BackgroundColor = sf::Color( 30, 40, 50 );
+
+	con::RectangleShape backgroundRectangle;
 	CurrentTurn currentTurn;
 	Timer timer;
 	StandardBoard* board;
@@ -30,8 +32,8 @@ public:
 		initTimer();
 		initButton();
 
-		background.setSize( static_cast<Vec2f>( con::Global.GameWindow.getSize() ) );
-		background.setFillColor( sf::Color( 30, 40, 50 ) );
+		backgroundRectangle.setSize( static_cast<Vec2f>( con::Global.GameWindow.getSize() ) );
+		backgroundRectangle.setFillColor( BackgroundColor );
 	}
 
 	void onEnable() override
@@ -202,12 +204,12 @@ private:
 	void initButton()
 	{
 		smallExitButton = &spawn<Button>();
-		// @ToDo: Go to menu.
 		smallExitButton->callback = []() {
-			con::Global.ExitGame = true;
+			con::Global.SceneStack.pop();
+			con::Global.SceneStack.push( static_cast<int16_t>( SceneID::Menu ) );
 		};
 		smallExitButton->sprite.setTexture( con::Global.Assets.Texture.get( "buttons" ) );
-		smallExitButton->sprite.setTextureRect( sf::IntRect( 4*Button::TextureSize.x,0, Button::TextureSize.x * 0.5f,Button::TextureSize.y ) );
+		smallExitButton->sprite.setTextureRect( sf::IntRect( 4*Button::TextureSize.x, 0, Button::TextureSize.x * 0.5f, Button::TextureSize.y ) );
 		smallExitButton->position = Vec2f( 8, con::Global.GameWindow.getSize().y - Button::TextureSize.y - 8 );
 	}
 

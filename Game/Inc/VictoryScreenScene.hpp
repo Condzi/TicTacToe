@@ -92,8 +92,8 @@ private:
 		againButton = &spawn<Button>();
 		menuButton = &spawn<Button>();
 
-		againButton->position = timeText.getPosition();
-		againButton->position.y += Field::VisualSize.y * 1.2f;
+		
+		againButton->position = static_cast<Vec2f>( con::Global.GameWindow.getSize() ) / 2.f - static_cast<Vec2f>( Button::TextureSize / 2u );
 		menuButton->position = againButton->position;
 		menuButton->position.y += Button::TextureSize.y * 1.2f;
 
@@ -111,9 +111,11 @@ private:
 			}
 		};
 
-		// @ToDo: Go to menu.
 		menuButton->callback = [&]() {
-			con::Global.ExitGame = true;
+			// Pop this and game scene.
+			con::Global.SceneStack.pop();
+			con::Global.SceneStack.pop();
+			con::Global.SceneStack.push( static_cast<int16_t>( SceneID::Menu ) );
 		};
 
 		menuButton->recieveInput = false;
