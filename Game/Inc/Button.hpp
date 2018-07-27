@@ -10,8 +10,9 @@ class Button final :
 {
 public:
 	inline static const Vec2u TextureSize{ 128, 64 };
-	inline static const sf::Color ColorClick = sf::Color( 150, 150, 150 );
-	inline static const sf::Color ColorNormal = sf::Color::White;
+	sf::Color colorClick = sf::Color( 150, 150, 150 );
+	sf::Color colorNormal = sf::Color::White;
+	bool recieveInput = true;
 
 	con::Sprite sprite;
 	std::function<void()> callback;
@@ -19,7 +20,8 @@ public:
 	void onUpdate() override
 	{
 		sprite.setPosition( position );
-		checkIsClicked();
+		if ( recieveInput )
+			checkIsClicked();
 	}
 
 private:
@@ -32,14 +34,14 @@ private:
 	{
 		if ( isCursorOverButton() ) {
 			if ( con::Global.Input.isDown( con::MouseButton::Left ) )
-				sprite.setColor( ColorClick );
+				sprite.setColor( colorClick );
 			else if ( con::Global.Input.isUp( con::MouseButton::Left ) ) {
-				sprite.setColor( ColorClick );
+				sprite.setColor( colorClick );
 				if ( callback )
 					callback();
 			}
 
 		} else
-			sprite.setColor( ColorNormal );
+			sprite.setColor( colorNormal );
 	}
 };

@@ -24,7 +24,6 @@ public:
 	{
 		tag = "Standard Game";
 		board = &spawn<StandardBoard>( Vec2f{ 96, 250 } );
-		smallExitButton = &spawn<Button>();
 
 		initCurrentTurnData();
 		initTimer();
@@ -198,6 +197,7 @@ private:
 
 	void initButton()
 	{
+		smallExitButton = &spawn<Button>();
 		// @ToDo: Go to menu.
 		smallExitButton->callback = []() {
 			con::Global.ExitGame = true;

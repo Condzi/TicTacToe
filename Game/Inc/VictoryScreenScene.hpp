@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "Button.hpp"
+
 class VictoryScreenScene final :
 	public con::Scene
 {
@@ -21,6 +23,9 @@ public:
 	con::Sprite winnerSprite;
 	con::Text winText;
 	con::Text timeText;
+
+	Button* againButton;
+	Button* menuButton;
 
 	const sf::Color BackgroundColor = sf::Color( 40, 40, 40 );
 	const sf::Color TextColor = sf::Color( 133, 181, 222 );
@@ -66,13 +71,14 @@ public:
 
 		winnerSprite.setPosition( 96 + Field::VisualSize.x * 0.5f, 250 - Field::VisualSize.y * 1.28f ); // 1.28 instead 1.3 to make small animation effect
 		winText.setPosition( winnerSprite.getPosition().x + offsetInX, winnerSprite.getPosition().y + Field::VisualSize.y / 3 );
-		timeText.setPosition( winnerSprite.getPosition().x, winnerSprite.getPosition().y + Field::VisualSize.y * 1.2 );
+		timeText.setPosition( winnerSprite.getPosition().x, winnerSprite.getPosition().y + Field::VisualSize.y * 1.2f );
+
+		initButtons();
 	}
 
 	void onUpdate() override
 	{
 		updateTransparency();
-		checkInput();
 
 		if ( state == State::Exit ) {
 			con::Global.SceneStack.pop();
@@ -81,6 +87,39 @@ public:
 	}
 
 private:
+	void initButtons()
+	{
+		againButton = &spawn<Button>();
+		menuButton = &spawn<Button>();
+
+		againButton->position = timeText.getPosition();
+		againButton->position.y += Field::VisualSize.y * 1.2f;
+		menuButton->position = againButton->position;
+		menuButton->position.y += Button::TextureSize.y * 1.2f;
+
+		againButton->sprite.setTexture( con::Global.Assets.Texture.get( "buttons" ) );
+		againButton->sprite.setTextureRect( sf::IntRect( 2*Button::TextureSize.x, 0, Button::TextureSize.x, Button::TextureSize.y ) );
+
+		menuButton->sprite.setTexture( con::Global.Assets.Texture.get( "buttons" ) );
+		menuButton->sprite.setTextureRect( sf::IntRect( 3*Button::TextureSize.x, 0, Button::TextureSize.x, Button::TextureSize.y ) );
+
+		againButton->callback = [&]() {
+			if ( state == State::Stable ) {
+				state = State::FadeOut;
+				menuButton->recieveInput = false;
+				againButton->recieveInput = false;
+			}
+		};
+
+		// @ToDo: Go to menu.
+		menuButton->callback = [&]() {
+			con::Global.ExitGame = true;
+		};
+
+		menuButton->recieveInput = false;
+		againButton->recieveInput = false;
+	}
+
 	void updateTransparency()
 	{
 		if ( state == State::FadeIn ) {
@@ -89,6 +128,8 @@ private:
 				if ( transparency >= 255 ) {
 					state = State::Stable;
 					transparency = 255;
+					menuButton->recieveInput = true;
+					againButton->recieveInput = true;
 				}
 			}
 		} else if ( state == State::FadeOut ) {
@@ -113,14 +154,12 @@ private:
 		fill = sf::Color::White;
 		fill.a = transparency;
 		winnerSprite.setColor( fill );
-	}
 
-	void checkInput()
-	{
-		// @ToDo: Placeholder until buttons show up.
-		if ( state == State::Stable )
-			if ( con::Global.Input.isDown( con::KeyboardKey::Escape ) ) {
-				state = State::FadeOut;
-			}
+		fill = menuButton->colorNormal;
+		fill.a = transparency;
+		menuButton->sprite.setColor( fill );
+		fill = againButton->colorNormal;
+		fill.a = transparency;
+		againButton->sprite.setColor( fill );
 	}
 };
