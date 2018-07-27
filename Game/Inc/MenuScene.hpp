@@ -16,6 +16,9 @@ public:
 	con::Text title;
 	Button* playButton;
 	Button* exitButton;
+	Button* musicButton;
+	Button* soundButton;
+	bool musicOn = true, soundOn = true;
 
 	MenuScene()
 	{
@@ -24,6 +27,7 @@ public:
 
 	void onPush() override
 	{
+		initOptionsFromSettings();
 		initText();
 		initButtons();
 
@@ -40,13 +44,21 @@ public:
 	}
 
 private:
+	void initOptionsFromSettings()
+	{
+		auto& settings = con::Global.Assets.Settings;
+		musicOn = con::ConvertTo<bool>( settings.getValue( "GAME", "MUSIC_ON" ).value() );
+		soundOn = con::ConvertTo<bool>( settings.getValue( "GAME", "SOUND_ON" ).value() );
+	}
+
 	void initButtons()
 	{
 		playButton = &spawn<Button>();
 		exitButton = &spawn<Button>();
 
-		playButton->sprite.setTexture( con::Global.Assets.Texture.get( "buttons" ) );
-		exitButton->sprite.setTexture( con::Global.Assets.Texture.get( "buttons" ) );
+		auto& buttonsTexture = con::Global.Assets.Texture.get( "buttons" );
+		playButton->sprite.setTexture( buttonsTexture );
+		exitButton->sprite.setTexture( buttonsTexture );
 
 		playButton->sprite.setTextureRect( sf::IntRect( 0, 0, Button::TextureSize.x, Button::TextureSize.y ) );
 		exitButton->sprite.setTextureRect( sf::IntRect( Button::TextureSize.x, 0, Button::TextureSize.x, Button::TextureSize.y ) );
@@ -65,6 +77,49 @@ private:
 		};
 
 		playButton->soundName = exitButton->soundName = "select_menu";
+
+		musicButton = &spawn<Button>();
+		soundButton = &spawn<Button>();
+
+		musicButton->sprite.setTexture( buttonsTexture );
+		soundButton->sprite.setTexture( buttonsTexture );
+		updateButtonsIcons();
+
+		musicButton->position = Vec2f( 8, con::Global.GameWindow.getSize().y - Button::TextureSize.y - 8 );
+		soundButton->position = musicButton->position;
+		soundButton->position.x += Button::TextureSize.x * 0.5f;
+
+		musicButton->callback = [&] {
+			musicOn = !musicOn;
+			con::Global.Assets.Settings.setValue( "GAME", "MUSIC_ON", con::ConvertTo<std::string>( musicOn ) );
+
+			updateVolume();
+			updateButtonsIcons();
+		};
+
+		soundButton->callback = [&] {
+			soundOn = !soundOn;
+			con::Global.Assets.Settings.setValue( "GAME", "SOUND_ON", con::ConvertTo<std::string>( soundOn ) );
+
+			updateVolume();
+			updateButtonsIcons();
+		};
+
+		updateVolume();
+		updateButtonsIcons();
+	}
+
+	void updateButtonsIcons()
+	{
+		if ( musicOn )
+			musicButton->sprite.setTextureRect( sf::IntRect( 4.5f * Button::TextureSize.x, 0, Button::TextureSize.x * 0.5f, Button::TextureSize.y ) );
+		else
+			musicButton->sprite.setTextureRect( sf::IntRect( 5 * Button::TextureSize.x, 0, Button::TextureSize.x * 0.5f, Button::TextureSize.y ) );
+
+		if ( soundOn )
+			soundButton->sprite.setTextureRect( sf::IntRect( 5.5f * Button::TextureSize.x, 0, Button::TextureSize.x * 0.5f, Button::TextureSize.y ) );
+		else
+			soundButton->sprite.setTextureRect( sf::IntRect( 6 * Button::TextureSize.x, 0, Button::TextureSize.x * 0.5f, Button::TextureSize.y ) );
 	}
 
 	void initText()
@@ -78,5 +133,18 @@ private:
 
 		title.setPosition( winSizeX / 2 - titleSize.x / 2, titleSize.y * 2.f );
 		title.move( 0, static_cast<float32_t>( Button::TextureSize.y ) * -1.2f );
+	}
+
+	void updateVolume()
+	{
+		if ( musicOn )
+			con::Global.Assets.Music.setVolume( 100 );
+		else
+			con::Global.Assets.Music.setVolume( 0 );
+
+		if ( soundOn )
+			con::Global.Assets.Sound.setVolume( 100 );
+		else
+			con::Global.Assets.Sound.setVolume( 0 );
 	}
 };
