@@ -53,7 +53,7 @@ struct Field final
 
 	void updateSprite()
 	{
-		if ( mode == Empty ) 
+		if ( mode == Empty )
 			sprite.setColor( sf::Color::Transparent );
 		else
 			sprite.setColor( defaultColor );
@@ -75,8 +75,46 @@ struct CurrentTurn final
 
 struct Timer final
 {
+	enum class Mode
+	{
+		Countdown,
+		Counting
+	} mode = Mode::Countdown;
+
+	sf::Time countdownTime = sf::seconds( 1 );
 	sf::Clock clock;
 	con::Text text;
+	// @ToDo: Different text color for Modes.
+
+	void reset()
+	{
+		auto countdownTimeStr = con::ConvertTo<std::string>( countdownTime.asSeconds() );
+
+		text.setString( con::ConvertTo<std::string>( "-", countdownTimeStr.substr( 0, countdownTimeStr.find( '.' ) + 3 ), "s" ) );
+		clock.restart();
+		mode = Mode::Countdown;
+	}
+
+	void updateTimerText()
+	{
+		std::string secondsString;
+		if ( mode == Mode::Countdown ) {
+			float sec = clock.getElapsedTime().asSeconds();
+			float countdownSec = countdownTime.asSeconds();
+
+			// @Bug: Can't set sf::Clock time point, so there is small amout of milliseconds that are discarded.
+			if ( countdownSec - sec < 0 ) {
+				mode = Mode::Counting;
+				clock.restart();
+			} else
+				secondsString = con::ConvertTo<std::string>( "-", countdownSec - sec );
+		}
+		if ( mode == Mode::Counting )
+			secondsString = con::ConvertTo<std::string>( clock.getElapsedTime().asSeconds() );
+
+		auto finalString = secondsString.substr( 0, secondsString.find( '.' ) + 3 );
+		text.setString( con::ConvertTo<std::string>( finalString, "s" ) );
+	}
 };
 
 // @ToDo: Add to the engine codebase.

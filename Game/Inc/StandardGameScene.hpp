@@ -28,19 +28,20 @@ public:
 
 	void onEnable() override
 	{
+		// Because we are reseting the timer in cleanUpDuringVictoryScreen
 		timer.clock.restart();
 	}
 
 	void onUpdate() override
 	{
-		clearScreenDuringVictoryScreen();
+		cleanUpDuringVictoryScreen();
 		// don't update below
 		if ( auto val = con::Global.SceneStack.getSceneOnTop().value(); val->tag == "Victory Screen" )
 			return;
 
 		checkInput();
 		tryCheckWin();
-		updateTimerText();
+		timer.updateTimerText();
 	}
 
 private:
@@ -72,6 +73,10 @@ private:
 
 	void checkInput()
 	{
+		// Don't check input if game didn't start
+		if ( timer.mode == Timer::Mode::Countdown )
+			return;
+
 		if ( auto fieldModeRet = board->getFieldModeAtMousePosition(); fieldModeRet.has_value() ) {
 			auto& fieldMode = *fieldModeRet.value();
 			if ( fieldMode != Field::Empty )
@@ -93,20 +98,11 @@ private:
 
 	void initTimer()
 	{
-		timer.clock.restart();
+		timer.reset();
 
 		timer.text.setFont( con::Global.Assets.Font.getDefault() );
-		timer.text.setString( "0.00s" );
 		timer.text.setCharacterSize( 50 );
 		timer.text.setPosition( board->position.x + Field::VisualSize.x * 0.9f, currentTurn.field.sprite.getPosition().y - Field::VisualSize.y * 0.9f );
-	}
-
-	void updateTimerText()
-	{
-		auto secondsText = con::ConvertTo<std::string>( timer.clock.getElapsedTime().asSeconds() );
-		auto finalText = secondsText.substr( 0, secondsText.find( '.' ) + 3 );
-
-		timer.text.setString( con::ConvertTo<std::string>( finalText, "s" ) );
 	}
 
 	std::optional<Field::Mode> checkWin()
@@ -195,7 +191,7 @@ private:
 		return {};
 	}
 
-	void clearScreenDuringVictoryScreen()
+	void cleanUpDuringVictoryScreen()
 	{
 		// Disable in next frame - give time for empty fields to render as empty
 		static bool disableNow = false;
@@ -204,6 +200,7 @@ private:
 			// reset, so 'O' will start first (we set it as last placed Field below, so need to reset)
 			currentTurn.field.mode = Field::O;
 			currentTurn.field.updateSprite();
+			timer.reset();
 			Disable();
 			return;
 		}
@@ -228,7 +225,7 @@ private:
 		if ( makeWinCheck )
 			if ( auto w = checkWin(); w ) {
 				// get the string from timer text, so update it first
-				updateTimerText();
+				timer.updateTimerText();
 				con::Global.PlayerStats["time"] = timer.text.getString().toAnsiString();
 
 				if ( w.value() == Field::Empty )
