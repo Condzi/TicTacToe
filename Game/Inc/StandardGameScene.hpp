@@ -15,6 +15,7 @@ class StandardGameScene final :
 {
 public:
 	const sf::Color WinnerColor = sf::Color( 133, 181, 222 );
+	con::RectangleShape background;
 	CurrentTurn currentTurn;
 	Timer timer;
 	StandardBoard* board;
@@ -28,6 +29,9 @@ public:
 		initCurrentTurnData();
 		initTimer();
 		initButton();
+
+		background.setSize( static_cast<Vec2f>( con::Global.GameWindow.getSize() ) );
+		background.setFillColor( sf::Color( 30, 40, 50 ) );
 	}
 
 	void onEnable() override
