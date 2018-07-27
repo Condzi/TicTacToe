@@ -64,7 +64,7 @@ public:
 			winnerSprite.setTextureRect( { 0, 0, texSize.x * 2, texSize.y } );
 		}
 
-		winnerSprite.setPosition( 96 + Field::VisualSize.x / 2, 250 - Field::VisualSize.y * 1.2 );
+		winnerSprite.setPosition( 96 + Field::VisualSize.x * 0.5f, 250 - Field::VisualSize.y * 1.28f ); // 1.28 instead 1.3 to make small animation effect
 		winText.setPosition( winnerSprite.getPosition().x + offsetInX, winnerSprite.getPosition().y + Field::VisualSize.y / 3 );
 		timeText.setPosition( winnerSprite.getPosition().x, winnerSprite.getPosition().y + Field::VisualSize.y * 1.2 );
 	}

@@ -55,6 +55,7 @@ private:
 		field = Field{};
 		field.mode = Field::O;
 		text.setString( "turn" );
+		text.setCharacterSize( 50 );
 		text.setFont( con::Global.Assets.Font.getDefault() );
 
 		auto& fieldSprite = field.sprite;
@@ -62,7 +63,7 @@ private:
 		fieldSprite.setScale( Scale, Scale );
 		fieldSprite.setTexture( con::Global.Assets.Texture.get( "ox" ) );
 
-		fieldSprite.setPosition( board->position.x + Field::VisualSize.x, board->position.y - Field::VisualSize.y * 1.2 );
+		fieldSprite.setPosition( board->position.x + Field::VisualSize.x * 0.5, board->position.y - Field::VisualSize.y * 1.3 );
 		text.setPosition( fieldSprite.getPosition().x + Field::VisualSize.x * 1.2f, fieldSprite.getPosition().y + Field::VisualSize.y / 3 );
 
 		board->defaultColor = field.defaultColor = WinnerColor;
@@ -96,7 +97,8 @@ private:
 
 		timer.text.setFont( con::Global.Assets.Font.getDefault() );
 		timer.text.setString( "0.00s" );
-		timer.text.setPosition( board->position.x + Field::VisualSize.x * 1.1, currentTurn.field.sprite.getPosition().y - Field::VisualSize.y * 0.5f );
+		timer.text.setCharacterSize( 50 );
+		timer.text.setPosition( board->position.x + Field::VisualSize.x * 0.9f, currentTurn.field.sprite.getPosition().y - Field::VisualSize.y * 0.9f );
 	}
 
 	void updateTimerText()
@@ -199,6 +201,9 @@ private:
 		static bool disableNow = false;
 		if ( disableNow ) {
 			disableNow = false;
+			// reset, so 'O' will start first (we set it as last placed Field below, so need to reset)
+			currentTurn.field.mode = Field::O;
+			currentTurn.field.updateSprite();
 			Disable();
 			return;
 		}
@@ -232,6 +237,10 @@ private:
 					con::Global.PlayerStats["winner"] = w.value()==Field::O ? "O" : "X";
 
 				con::Global.SceneStack.push( static_cast<int16_t>( SceneID::VictoryScreen ) );
+
+				// in input we set the next field's turn, and it's not esthetical
+				currentTurn.field.mode = currentTurn.field.mode==Field::O ? Field::X : Field::O;
+				currentTurn.field.updateSprite();
 			}
 	}
 };
