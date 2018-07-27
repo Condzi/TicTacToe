@@ -94,7 +94,7 @@ struct Timer final
 		Counting
 	} mode = Mode::Countdown;
 
-	inline static const sf::Time CountdownTime = sf::seconds( 2 );
+	inline static const sf::Time CountdownTime = sf::seconds( 1 );
 	sf::Clock clock;
 	con::Text text;
 	inline static const sf::Color TextColorCountdown = sf::Color::Red;
@@ -107,7 +107,7 @@ struct Timer final
 
 	void reset()
 	{
-		auto countdownTimeStr = con::ConvertTo<std::string>( CountdownTime.asSeconds() );
+		auto countdownTimeStr = con::ConvertTo<std::string>( CountdownTime.asSeconds() + 0.001 );
 
 		text.setString( con::ConvertTo<std::string>( "-", countdownTimeStr.substr( 0, countdownTimeStr.find( '.' ) + 3 ), "s" ) );
 		clock.restart();
