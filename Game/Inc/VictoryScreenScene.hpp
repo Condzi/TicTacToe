@@ -127,8 +127,10 @@ private:
 			con::Global.SceneStack.push( static_cast<int16_t>( SceneID::Menu ) );
 		};
 
-		menuButton->recieveInput = false;
 		againButton->recieveInput = false;
+		menuButton->recieveInput = false;
+
+		againButton->soundName = menuButton->soundName = "select_menu";
 	}
 
 	void updateTransparency()

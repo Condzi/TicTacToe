@@ -34,6 +34,14 @@ public:
 
 		backgroundRectangle.setSize( static_cast<Vec2f>( con::Global.GameWindow.getSize() ) );
 		backgroundRectangle.setFillColor( BackgroundColor );
+
+		con::Global.Assets.Music.play( "game" );
+	}
+
+	void onPop() override
+	{
+		// @ToDo: Add Music.stop? 
+		con::Global.Assets.Music.getPlayer().stop();
 	}
 
 	void onEnable() override
@@ -102,6 +110,8 @@ private:
 
 				currentTurn.field.updateSprite();
 				makeWinCheck = true;
+
+				con::Global.Assets.Sound.play( "select_field" );
 			}
 		}
 	}
@@ -211,6 +221,7 @@ private:
 		smallExitButton->sprite.setTexture( con::Global.Assets.Texture.get( "buttons" ) );
 		smallExitButton->sprite.setTextureRect( sf::IntRect( 4*Button::TextureSize.x, 0, Button::TextureSize.x * 0.5f, Button::TextureSize.y ) );
 		smallExitButton->position = Vec2f( 8, con::Global.GameWindow.getSize().y - Button::TextureSize.y - 8 );
+		smallExitButton->soundName = "select_menu";
 	}
 
 	void cleanUpDuringVictoryScreen()

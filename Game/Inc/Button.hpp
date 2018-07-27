@@ -9,6 +9,7 @@ class Button final :
 	public con::Entity
 {
 public:
+	std::string soundName;
 	inline static const Vec2u TextureSize{ 128, 64 };
 	sf::Color colorClick = sf::Color( 150, 150, 150 );
 	sf::Color colorNormal = sf::Color::White;
@@ -37,6 +38,8 @@ private:
 				sprite.setColor( colorClick );
 			else if ( con::Global.Input.isUp( con::MouseButton::Left ) ) {
 				sprite.setColor( colorClick );
+				if ( !soundName.empty() )
+					con::Global.Assets.Sound.play( soundName );
 				if ( callback )
 					callback();
 			}

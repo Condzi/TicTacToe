@@ -29,6 +29,14 @@ public:
 
 		backgroundRectangle.setSize( static_cast<Vec2f>( con::Global.GameWindow.getSize() ) );
 		backgroundRectangle.setFillColor( BackgroundColor );
+
+		con::Global.Assets.Music.play( "menu" );
+	}
+
+	void onPop() override
+	{
+		// @ToDo: add Music.stop. Maybe not needed?
+		con::Global.Assets.Music.getPlayer().stop();
 	}
 
 private:
@@ -55,6 +63,8 @@ private:
 		exitButton->callback = [] {
 			con::Global.ExitGame = true;
 		};
+
+		playButton->soundName = exitButton->soundName = "select_menu";
 	}
 
 	void initText()
