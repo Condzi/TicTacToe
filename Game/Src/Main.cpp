@@ -15,6 +15,7 @@ void loadAssets()
 
 	textures.load( "data/ox.png", "ox" );
 	textures.load( "data/board.png", "board" );
+	textures.load( "data/buttons.png", "buttons" );
 }
 
 int main()

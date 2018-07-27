@@ -7,6 +7,8 @@
 
 #include "StandardBoard.hpp"
 #include "VictoryScreenScene.hpp"
+#include "Timer.hpp"
+#include "Button.hpp"
 
 class StandardGameScene final :
 	public con::Scene
@@ -16,14 +18,17 @@ public:
 	CurrentTurn currentTurn;
 	Timer timer;
 	StandardBoard* board;
+	Button* smallExitButton;
 
 	void onPush() override
 	{
 		tag = "Standard Game";
 		board = &spawn<StandardBoard>( Vec2f{ 96, 250 } );
+		smallExitButton = &spawn<Button>();
 
 		initCurrentTurnData();
 		initTimer();
+		initButton();
 	}
 
 	void onEnable() override
@@ -189,6 +194,17 @@ private:
 			return Field::Empty;
 
 		return {};
+	}
+
+	void initButton()
+	{
+		// @ToDo: Go to menu.
+		smallExitButton->callback = []() {
+			con::Global.ExitGame = true;
+		};
+		smallExitButton->sprite.setTexture( con::Global.Assets.Texture.get( "buttons" ) );
+		smallExitButton->sprite.setTextureRect( sf::IntRect( 4*Button::TextureSize.x,0, Button::TextureSize.x * 0.5f,Button::TextureSize.y ) );
+		smallExitButton->position = Vec2f( 8, con::Global.GameWindow.getSize().y - Button::TextureSize.y - 8 );
 	}
 
 	void cleanUpDuringVictoryScreen()
