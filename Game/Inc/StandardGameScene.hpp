@@ -21,7 +21,6 @@ public:
 	CurrentTurn currentTurn;
 	Timer timer;
 	StandardBoard* board;
-	Button* smallExitButton;
 
 	// Don't switch to Victory Screen immidietly - wait this time.
 	inline static const sf::Time TimeToSwitch = sf::seconds( 0.2f );
@@ -34,7 +33,7 @@ public:
 
 		initCurrentTurnData();
 		initTimer();
-		initButton();
+		initExitButton();
 
 		backgroundRectangle.setSize( static_cast<Vec2f>( con::Global.GameWindow.getSize() ) );
 		backgroundRectangle.setFillColor( BackgroundColor );
@@ -234,17 +233,17 @@ private:
 		return {};
 	}
 
-	void initButton()
+	void initExitButton()
 	{
-		smallExitButton = &spawn<Button>();
-		smallExitButton->callback = []() {
+		auto& button = spawn<Button>();
+		button.callback = []() {
 			con::Global.SceneStack.pop();
 			con::Global.SceneStack.push( static_cast<int16_t>( SceneID::Menu ) );
 		};
-		smallExitButton->sprite.setTexture( con::Global.Assets.Texture.get( "buttons" ) );
-		smallExitButton->sprite.setTextureRect( sf::IntRect( 4*Button::TextureSize.x, 0, Button::TextureSize.x * 0.5f, Button::TextureSize.y ) );
-		smallExitButton->position = Vec2f( 8, con::Global.GameWindow.getSize().y - Button::TextureSize.y - 8 );
-		smallExitButton->soundName = "select_menu";
+		button.sprite.setTexture( con::Global.Assets.Texture.get( "buttons" ) );
+		button.sprite.setTextureRect( sf::IntRect( 4*Button::TextureSize.x, 0, Button::TextureSize.x * 0.5f, Button::TextureSize.y ) );
+		button.position = Vec2f( 8, con::Global.GameWindow.getSize().y - Button::TextureSize.y - 8 );
+		button.soundName = "select_menu";
 	}
 
 	void cleanUpDuringVictoryScreen()
