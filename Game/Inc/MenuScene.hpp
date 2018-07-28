@@ -14,6 +14,7 @@ public:
 	const sf::Color BackgroundColor = sf::Color( 30, 40, 50 );
 	con::RectangleShape backgroundRectangle;
 	con::Text title;
+	con::Text createdByText;
 	Button* playButton;
 	Button* exitButton;
 	Button* musicButton;
@@ -128,11 +129,20 @@ private:
 		title.setCharacterSize( 72 );
 		title.setString( "Tic Tac Toe" );
 
-		auto winSizeX = static_cast<float32_t>( con::Global.GameWindow.getSize().x );
+		createdByText.setFont( con::Global.Assets.Font.getDefault() );
+		createdByText.setCharacterSize( 32 );
+		createdByText.setString( "created by\nCondzi" );
+		createdByText.setFillColor( sf::Color( 255, 255, 255, 20 ) );
+
+		auto winSize = static_cast<Vec2f>( con::Global.GameWindow.getSize() );
 		Vec2f titleSize{ title.getGlobalBounds().width, title.getGlobalBounds().height };
 
-		title.setPosition( winSizeX / 2 - titleSize.x / 2, titleSize.y * 2.f );
+		title.setPosition( winSize.x / 2 - titleSize.x / 2, titleSize.y * 2.f );
 		title.move( 0, static_cast<float32_t>( Button::TextureSize.y ) * -1.2f );
+
+		Vec2f createdBySize{ createdByText.getGlobalBounds().width, createdByText.getGlobalBounds().height };
+		createdByText.setPosition( winSize - createdBySize );
+		createdByText.move( -8, -16 );
 	}
 
 	void updateVolume()
