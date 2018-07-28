@@ -2,7 +2,11 @@
 
 See 'Releases' for the lateset version.
 
-# [Screenshots](https://imgur.com/a/bD136qh)
+# Screenshots
+![Menu](https://i.imgur.com/KFwlmd7.png)
+![Game](https://i.imgur.com/Grpvt0Z.png)
+![Victory](https://i.imgur.com/1NHNwoW.png)
+
 
 ## Tech
 * SFML 2.5.0
