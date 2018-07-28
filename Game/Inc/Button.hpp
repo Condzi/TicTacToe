@@ -43,7 +43,6 @@ private:
 				if ( callback )
 					callback();
 			}
-
 		} else
 			sprite.setColor( colorNormal );
 	}

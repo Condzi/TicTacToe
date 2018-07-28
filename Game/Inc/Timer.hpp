@@ -5,21 +5,9 @@
 
 #pragma once
 
-struct Timer final
+class Timer final
 {
-	Timer()
-	{
-		auto desiredColor = TextColorCounting;
-		auto startingColor = TextColorCountdown;
-		auto t = CountdownTime.asSeconds();
-
-		// just V = s/t
-		colorDelta.r = ( desiredColor.r - startingColor.r ) / t;
-		colorDelta.g = ( desiredColor.g - startingColor.g ) / t;
-		colorDelta.b = ( desiredColor.b - startingColor.b ) / t;
-		colorDelta.a = ( desiredColor.a - startingColor.a ) / t;
-	}
-
+public:
 	enum class Mode
 	{
 		Countdown,
@@ -35,6 +23,19 @@ struct Timer final
 	{
 		float32_t r, g, b, a;
 	} colorDelta;
+
+	Timer()
+	{
+		auto desiredColor = TextColorCounting;
+		auto startingColor = TextColorCountdown;
+		auto t = CountdownTime.asSeconds();
+
+		// just V = s/t
+		colorDelta.r = ( desiredColor.r - startingColor.r ) / t;
+		colorDelta.g = ( desiredColor.g - startingColor.g ) / t;
+		colorDelta.b = ( desiredColor.b - startingColor.b ) / t;
+		colorDelta.a = ( desiredColor.a - startingColor.a ) / t;
+	}
 
 	void reset()
 	{
