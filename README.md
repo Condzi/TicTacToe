@@ -8,7 +8,7 @@ See 'Releases' for lateset version.
 * Engine from [TreeTyccon](https://github.com/Condzi/TreeTycoon/TreeTycoon/Engine)
 
 ## Resources
-* Music from [Bendound](https://www.bensound.com/)
+* Music from [Bendsound](https://www.bensound.com/)
 * Sounds generated using [Bfxr](https://www.bfxr.net/)
 * SFML website [here](http://sfml-dev.org)
 
