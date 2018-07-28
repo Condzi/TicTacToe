@@ -23,6 +23,10 @@ public:
 	StandardBoard* board;
 	Button* smallExitButton;
 
+	// Don't switch to Victory Screen immidietly - wait this time.
+	inline static const sf::Time TimeToSwitch = sf::seconds( 0.2f );
+	sf::Time eleapsedTimeToSwitch = TimeToSwitch;
+
 	void onPush() override
 	{
 		tag = "Standard Game";
@@ -48,13 +52,31 @@ public:
 	{
 		// Because we are reseting the timer in cleanUpDuringVictoryScreen
 		timer.clock.restart();
+		eleapsedTimeToSwitch = TimeToSwitch;
+		goToVictoryScreen = false;
 	}
 
 	void onUpdate() override
 	{
+		// When switching to the victory screen there is a one frame gap that we need to funfil - 
+		// the goToVictoryScreen val is false, but sceneOnTop is not victory screen so for one frame
+		// checkInput, tryCheckWin and timer are called - this value prevents that.
+		bool magicValThatPreventsFromUpdatingWhenGoingToVictoryScreen = false;
+		if ( goToVictoryScreen ) {
+			auto dt = eleapsedTimeToSwitch - con::Global.FrameTime;
+			if ( dt.asSeconds() <= 0 ) {
+				goToVictoryScreen = false;
+				magicValThatPreventsFromUpdatingWhenGoingToVictoryScreen = true;
+				con::Global.SceneStack.push( static_cast<int16_t>( SceneID::VictoryScreen ) );
+			} else
+				eleapsedTimeToSwitch -= con::Global.FrameTime;
+		}
+
 		cleanUpDuringVictoryScreen();
 		// don't update below
-		if ( auto val = con::Global.SceneStack.getSceneOnTop().value(); val->tag == "Victory Screen" )
+		if ( auto val = con::Global.SceneStack.getSceneOnTop().value(); val->tag == "Victory Screen" ||
+			 goToVictoryScreen ||
+			 magicValThatPreventsFromUpdatingWhenGoingToVictoryScreen )
 			return;
 
 		checkInput();
@@ -64,6 +86,7 @@ public:
 
 private:
 	bool makeWinCheck = false;
+	bool goToVictoryScreen = false;
 
 	void initCurrentTurnData()
 	{
@@ -266,8 +289,7 @@ private:
 				else
 					con::Global.PlayerStats["winner"] = w.value()==Field::O ? "O" : "X";
 
-				con::Global.SceneStack.push( static_cast<int16_t>( SceneID::VictoryScreen ) );
-
+				goToVictoryScreen = true;
 				// in input we set the next field's turn, and it's not esthetical
 				currentTurn.field.mode = currentTurn.field.mode==Field::O ? Field::X : Field::O;
 				currentTurn.field.updateSprite();

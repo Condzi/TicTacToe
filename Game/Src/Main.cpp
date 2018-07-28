@@ -30,8 +30,8 @@ void loadAssets()
 	auto& settings = con::Global.Assets.Settings;
 	// Force these dimensions. @ToDo: Probably should be set *before* game loads.
 	// @Bug: Doesn't set?
-	settings.setValue( "WINDOW", "WIDTH", "500" );
-	settings.setValue( "WINDOW", "HEIGHT", "500" );
+	settings.setValue( "WINDOW", "WIDTH", "480" );
+	settings.setValue( "WINDOW", "HEIGHT", "720" );
 
 
 	if ( !settings.getValue( "GAME", "MUSIC_ON" ).has_value() )
