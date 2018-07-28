@@ -25,6 +25,7 @@ constexpr float32_t Scale = 1.5f;
 
 enum class SceneID : uint8_t
 {
+	Loading,
 	Menu,
 	StandardGame,
 	GomoroGame,
