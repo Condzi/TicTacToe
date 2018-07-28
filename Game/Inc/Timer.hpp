@@ -26,10 +26,10 @@ struct Timer final
 		Counting
 	} mode = Mode::Countdown;
 
-	inline static const sf::Time CountdownTime = sf::seconds( 1.5 );
+	inline static const sf::Time CountdownTime = sf::seconds( 1 );
 	sf::Clock clock;
 	con::Text text;
-	inline static const sf::Color TextColorCountdown = sf::Color::Red;
+	inline static const sf::Color TextColorCountdown = sf::Color( 250, 110, 55 );
 	inline static const sf::Color TextColorCounting = sf::Color::White;
 	struct
 	{

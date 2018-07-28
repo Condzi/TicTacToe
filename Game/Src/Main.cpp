@@ -25,6 +25,7 @@ void loadAssets()
 	auto& music = con::Global.Assets.Music;
 	music.add( "data/bensound-love.ogg", "menu" );
 	music.add( "data/bensound-creativeminds.ogg", "game" );
+	music.getPlayer().setLoop( true );
 	
 	auto& settings = con::Global.Assets.Settings;
 	// Force these dimensions. @ToDo: Probably should be set *before* game loads.
