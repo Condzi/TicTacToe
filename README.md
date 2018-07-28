@@ -2,11 +2,7 @@
 
 See 'Releases' for the lateset version.
 
-## Screenshots
-
-![MainMenuScreen](https://github.com/Condzi/TicTacToe/blob/master/screenshots/SS_1.PNG)
-![GameScreen](https://github.com/Condzi/TicTacToe/blob/master/screenshots/SS_2.PNG)
-![VictoryScreen](https://github.com/Condzi/TicTacToe/blob/master/screenshots/SS_3.PNG)
+# [Screenshots](https://imgur.com/a/bD136qh)
 
 ## Tech
 * SFML 2.5.0
