@@ -11,7 +11,7 @@ See 'Releases' for the lateset version.
 ## Tech
 * SFML 2.5.0
 * C++17
-* Engine from [TreeTyccon](https://github.com/Condzi/TreeTycoon/TreeTycoon/Engine)
+* My own [Engine](https://github.com/Condzi/Engine)
 
 ## Resources
 * Music from [Bensound](https://www.bensound.com/)
