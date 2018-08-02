@@ -11,7 +11,7 @@ See 'Releases' for the lateset version.
 ## Tech
 * SFML 2.5.0
 * C++17
-* My own [Engine](https://github.com/Condzi/Engine)
+* My own [Engine](https://github.com/Condzi/Engine/tree/07b16982bebc41acfd9b66f1f8cf36eb226a9e2a) (old version) 
 
 ## Resources
 * Music from [Bensound](https://www.bensound.com/)
